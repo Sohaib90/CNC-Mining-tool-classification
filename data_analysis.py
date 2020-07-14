@@ -266,7 +266,7 @@ def main_app():
                         "Machining_Process", "feedrate", "clamp_pressure"]
         df_dict["feature_name"] = name_columns
         df_dict["feature importance"] = importance
-        st.subheader("The model feature importance gives back numbers which are shown in the graph below, \
+        st.markdown("The model feature importance gives back numbers which are shown in the graph below, \
                         However we have also shown how these features are mapped to the names with the dataframe given below.")
         st.write(df_dict)
 
