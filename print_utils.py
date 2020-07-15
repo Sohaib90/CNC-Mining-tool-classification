@@ -39,13 +39,17 @@ def print_intro():
                 \n\n 1. Tool wear detection --- Supervised binary classification could be performed for identification of worn and unworn cutting tools. Eight experiments were run with an unworn tool while ten were run with a worn tool (see tool_condition column for indication). \
                 \n\n 2. Detection of inadequate clamping --- The data could be used to detect when a workpiece is not being held in the vise with sufficient pressure to pass visual inspection (see passedvisualinspection column for indication of visual flaws). \
                 Experiments were run with pressures of 2.5, 3.0, and 4.0 bar. The data could also be used for detecting when conditions are critical enough to prevent the machining operation from completing (see machining_completed column for indication of when machining was preemptively stopped due to safety concerns).")
-              
-              
-              
-            # There were a total of 18 machine experiments, time series data was collected with a sampling rate of 100 ms from the 4 motors in the CNC (Spindle, and X,Y,Z axis). \
-            # The outputs of each experiment are two labels, one is if the tool is in worn condition or not. And the second is if the tool has passed the visual inspection. Our goal is to consider only the worn/unworn as the output, and train the models according to that.\
-            # There have been several researches and attempts made to solve this problem. Some attempts used Artificial Neural Networks, whereas some used models like decision trees and random forest. Some researches have been able to find surprising relations e.g high peaks of velocity/acc on certain axis near the start and end of the experiment.\
-            # The major research gap has been on how to interpret the data. Should the experiments be considered as time series data, where all the previous values are considered as well in future upcoming data. Or should all the data points be considered as completely independent of one another. Intuition suggests that the experiments should be composed of time series data, but in that case, we’d have really little amount of data points to train on and the training algorithm would highly overfit the data.")
+    
+    st.markdown("### GUI Design:")
+    st.markdown("GUI is divided into three sections:\
+                \n\n 1. **EDA/Feature Engineering**:\
+                    \n In this section we will dive deeper into the data and how it is structured. \
+                \n\n 2. **Model**: \
+                    \n In this section we will run multiple classifiers to get an insight on how different \
+                    classifiers perform with the classification task at hand. \
+                \n\n 3. **Results**: \
+                    \n In this section we will analyze our models with different metrics and plots, to judge \
+                    the models on the task.")
 
 def print_model_info(key):
     if key == "DummyClassifier":

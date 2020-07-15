@@ -22,7 +22,7 @@ def main_app():
         intro_info()
         print_intro()
 
-    if option == "EDA/Feature Engineering":
+    elif option == "EDA/Feature Engineering":
         print_insight_info()
         i = 0 
         files = []
@@ -224,8 +224,7 @@ def main_app():
             
             handle.close()
 
-    else:
-
+    elif option == "Results":
         st.title("Results")
         _, all_files = integrate_all_files(train_res)
         shuffled, data = shuffle_split_data(all_files)
