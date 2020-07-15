@@ -6,3 +6,6 @@ CNC mining tool classification using streamlit
 2. git clone repository
 3. change directory to the repository
 4. execute command: streamlit run data_analysis.py
+
+#### To run on web
+go to cnctool.herokuapp.com
