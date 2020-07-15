@@ -10,6 +10,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import learning_curve
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, plot_confusion_matrix
+from sklearn.metrics import precision_recall_fscore_support, plot_roc_curve
 
 # classifiers 
 from sklearn import linear_model
@@ -24,6 +25,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC, LinearSVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LassoCV
+
+from print_utils import *
 
 ## Funcitons for EDA/Feature Engineering
 def get_redundant_pairs(df):
@@ -80,7 +83,6 @@ def shuffle_split_data(main_df):
 
     return shuffled, [X_train, X_test, Y_train, Y_test]
 
-
 ## Functions for model
 @st.cache(suppress_st_warning=True)
 def model_insights(X_train, Y_train, X_test, Y_test):
@@ -105,6 +107,7 @@ def model_insights(X_train, Y_train, X_test, Y_test):
     for key in models:
 
         st.subheader("Running a {} model on the data".format(key))
+        print_model_info(key)
         time.sleep(1.5)
         model = models[key]
         model.fit(X_train, Y_train)
@@ -114,8 +117,8 @@ def model_insights(X_train, Y_train, X_test, Y_test):
         test_acc_model=round(model.score(X_test, Y_test)*100,2)
         train_acc_model=round(model.score(X_train, Y_train)*100,2)
 
-        st.markdown("The train accuracy is {}".format(train_acc_model))
-        st.markdown("The test accuracy is {}".format(test_acc_model))
+        st.markdown("**The train accuracy is {}**".format(train_acc_model))
+        st.markdown("**The test accuracy is {}**".format(test_acc_model))
        
         st.markdown("#### Learning Curve")
         plt_first(model, "Leanring curves for {}".format(key), X_train, Y_train, n_jobs=6)
@@ -198,7 +201,6 @@ def plt_second(estimator, title, X, y, axes=None, ylim=None, cv=None,
 
     st.pyplot()
 
-
 def plt_third(estimator, title, X, y, axes=None, ylim=None, cv=None,
                         n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5)):
 
@@ -230,4 +232,44 @@ def plt_third(estimator, title, X, y, axes=None, ylim=None, cv=None,
     axes.set_ylabel("Score")
     axes.set_title("Performance of the model")
 
+    st.pyplot()
+
+# Feature importance reference https://stackoverflow.com/questions/24255723/sklearn-logistic-regression-important-features?rq=1
+def feature_importance_tree(importance):
+    df_dict = pd.DataFrame()
+    # summarize feature importance
+    name_columns = ["X1_ActualPosition", "X1_ActualVelocity", "X1_ActualAcceleration", "X1_CommandPosition", 
+                    "X1_CommandVelocity", "X1_CommandAcceleration", "X1_CurrentFeedback", "X1_DCBusVoltage", 
+                    "X1_OutputCurrent", "X1_OutputVoltage", "X1_OutputPower", "Y1_ActualPosition", "Y1_ActualVelocity", 
+                    "Y1_ActualAcceleration", "Y1_CommandPosition", "Y1_CommandVelocity", "Y1_CommandAcceleration", 
+                    "Y1_CurrentFeedback", "Y1_DCBusVoltage", "Y1_OutputCurrent", "Y1_OutputVoltage", "Y1_OutputPower", 
+                    "Z1_ActualPosition", "Z1_ActualVelocity", "Z1_ActualAcceleration", "Z1_CommandPosition", "Z1_CommandVelocity", 
+                    "Z1_CommandAcceleration", "Z1_CurrentFeedback", "Z1_DCBusVoltage", "Z1_OutputCurrent", "Z1_OutputVoltage", 
+                    "S1_ActualPosition", "S1_ActualVelocity", "S1_ActualAcceleration", "S1_CommandPosition", "S1_CommandVelocity", 
+                    "S1_CommandAcceleration", "S1_CurrentFeedback", "S1_DCBusVoltage", "S1_OutputCurrent", "S1_OutputVoltage", 
+                    "S1_OutputPower", "S1_SystemInertia", "M1_CURRENT_PROGRAM_NUMBER", "M1_sequence_number", "M1_CURRENT_FEEDRATE", 
+                    "Machining_Process", "feedrate", "clamp_pressure"]
+    df_dict["feature_name"] = name_columns
+    df_dict["feature_importance"] = importance
+    st.markdown("The model feature importance gives back numbers which are shown in the graph below, \
+                    However we have also shown how these features are mapped to the names with the dataframe given below.")
+    st.write(df_dict)
+    # plot feature importance
+    plt.bar([x for x in range(len(importance))], importance)
+    st.pyplot()
+
+def feature_importance_reg(importance, X):
+    feature_importance = abs(importance[0])
+    feature_importance = 100.0 * (feature_importance / feature_importance.max())
+    sorted_idx = np.argsort(feature_importance)
+    pos = np.arange(sorted_idx.shape[0]) + .5
+
+    featfig = plt.figure()
+    featax = featfig.add_subplot(1, 1, 1)
+    featax.barh(pos, feature_importance[sorted_idx], align='center')
+    featax.set_yticks(pos)
+    featax.set_yticklabels(np.array(X.columns)[sorted_idx], fontsize=4)
+    featax.set_xlabel('Relative Feature Importance')
+
+    plt.tight_layout()
     st.pyplot()

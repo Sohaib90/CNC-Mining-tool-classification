@@ -20,6 +20,7 @@ def main_app():
 
     if option == "Introduction":
         intro_info()
+        print_intro()
 
     if option == "EDA/Feature Engineering":
         print_insight_info()
@@ -164,7 +165,7 @@ def main_app():
                 all_files, mapped_files = integrate_all_files(train_res)
                 sb.pairplot(mapped_files.sample(int(len(mapped_files)/4)), hue='label', vars= list_corr[:7])
                 st.pyplot()
-
+            
         else:
             st.title("Data Processing for Model Training")
             st.markdown("For Model training, we integrate all the experimentation files and \
@@ -208,6 +209,7 @@ def main_app():
 
     elif option == "Model":
         intro_model()
+        st.title("Model Training")
         _, all_files = integrate_all_files(train_res)
         shuffled, data = shuffle_split_data(all_files)
         st.markdown("#### Click the button below to run the models on the data: ")
@@ -215,18 +217,16 @@ def main_app():
         if button_models:
             res_model = model_insights(data[0], data[2], data[1], data[3])
 
-        st.title("Saved models..")
-        st.write(res_model)
-        with open('filename.pickle', 'wb') as handle:
-            pickle.dump(res_model, handle, protocol=pickle.HIGHEST_PROTOCOL)
-        
-        handle.close()
-        
-    elif option == "Results":
-        st.info("This Section will briefly give insights into the \
-                 Results of the models we trained in the Model Section\
-                we will give insights using precision, accuracy and all \
-                other metrics to give summaries how our models performed on the data.")
+            st.subheader("Saved models..")
+            st.write(res_model)
+            with open('filename.pickle', 'wb') as handle:
+                pickle.dump(res_model, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            
+            handle.close()
+
+    else:
+
+        st.title("Results")
         _, all_files = integrate_all_files(train_res)
         shuffled, data = shuffle_split_data(all_files)
         with open('filename.pickle', 'rb') as handle:
@@ -235,46 +235,42 @@ def main_app():
         handle.close()
 
         dropdown_arr = [v for v in b.keys()]
-        st.subheader("Results and Insights")
+        st.subheader("You have to first run the Models section to be able to run results section, as the trianed models \
+                     are then used for the results/insights.")
         drop_model = st.selectbox("Select the model you want insights about", dropdown_arr)
         st.write("## {}".format(drop_model))
         model = b[drop_model]
 
         # Accuracy and Confusion Matrix
-        st.markdown("#### Accuracy is : {}%".format(100*accuracy_score(data[3], model.predict(data[1]))))
+        st.markdown("#### Accuracy is : {}%".format(round(100*accuracy_score(data[3], model.predict(data[1])))))
+        metrics = precision_recall_fscore_support(data[3], model.predict(data[1]))
+        st.markdown("#### Precision of class 0 is : {} and class 1 is : {}".format(round(metrics[0][0]*100, 2), round(metrics[0][1]*100, 2)))
+        st.markdown("#### Recall of class 0 is : {} and class 1 is : {}".format(round(metrics[1][0]*100, 2), round(metrics[1][1]*100, 2)))
+        st.markdown("#### F1-score of class 0 is : {} and class 1 is : {}".format(round(metrics[2][0]*100, 2), round(metrics[2][1]*100, 2)))
+
         st.subheader("=======================================================")
         st.subheader("Confusion Matrix")
         plot_confusion_matrix(model, data[1], data[3])
         st.pyplot()
 
         st.subheader("=======================================================")
-        st.subheader("Feature Importance in the trained model")
-        # Feature importance in the model
-        importance = model.feature_importances_
-        df_dict = pd.DataFrame()
-        # summarize feature importance
-        name_columns = ["X1_ActualPosition", "X1_ActualVelocity", "X1_ActualAcceleration", "X1_CommandPosition", 
-                        "X1_CommandVelocity", "X1_CommandAcceleration", "X1_CurrentFeedback", "X1_DCBusVoltage", 
-                        "X1_OutputCurrent", "X1_OutputVoltage", "X1_OutputPower", "Y1_ActualPosition", "Y1_ActualVelocity", 
-                        "Y1_ActualAcceleration", "Y1_CommandPosition", "Y1_CommandVelocity", "Y1_CommandAcceleration", 
-                        "Y1_CurrentFeedback", "Y1_DCBusVoltage", "Y1_OutputCurrent", "Y1_OutputVoltage", "Y1_OutputPower", 
-                        "Z1_ActualPosition", "Z1_ActualVelocity", "Z1_ActualAcceleration", "Z1_CommandPosition", "Z1_CommandVelocity", 
-                        "Z1_CommandAcceleration", "Z1_CurrentFeedback", "Z1_DCBusVoltage", "Z1_OutputCurrent", "Z1_OutputVoltage", 
-                        "S1_ActualPosition", "S1_ActualVelocity", "S1_ActualAcceleration", "S1_CommandPosition", "S1_CommandVelocity", 
-                        "S1_CommandAcceleration", "S1_CurrentFeedback", "S1_DCBusVoltage", "S1_OutputCurrent", "S1_OutputVoltage", 
-                        "S1_OutputPower", "S1_SystemInertia", "M1_CURRENT_PROGRAM_NUMBER", "M1_sequence_number", "M1_CURRENT_FEEDRATE", 
-                        "Machining_Process", "feedrate", "clamp_pressure"]
-        df_dict["feature_name"] = name_columns
-        df_dict["feature importance"] = importance
-        st.markdown("The model feature importance gives back numbers which are shown in the graph below, \
-                        However we have also shown how these features are mapped to the names with the dataframe given below.")
-        st.write(df_dict)
-
-        # plot feature importance
-        plt.bar([x for x in range(len(importance))], importance)
+        st.subheader("ROC Curve")
+        plot_roc_curve(model, data[1].to_numpy(), data[3].to_numpy().reshape(-1,1))
         st.pyplot()
 
 
+        # Feature importance in the model
+        if drop_model == "RandomForestClassifier" or drop_model == "DecisionTreeClassifier":
+            st.subheader("=======================================================")
+            st.subheader("Feature Importance in the trained model")
+            importance = model.feature_importances_
+            feature_importance_tree(importance)
+        elif drop_model == "LogisticRegression" or drop_model == "Perceptron" or drop_model == "SGDClassifier" or drop_model == "LinearSVC":
+            st.subheader("=======================================================")
+            st.subheader("Feature Importance in the trained model")
+            importance = model.coef_
+            feature_importance_reg(importance, shuffled)
+        
         # Accuracy, Performance, Scalability plots
         st.subheader("=======================================================")
         st.subheader("Scalibility of the model")
@@ -283,10 +279,6 @@ def main_app():
         st.subheader("Performance of the model")
         plt_third(model, "Performance of {}".format(drop_model), data[0], data[2], n_jobs=6)
 
-
-
-
-            
 
 if __name__=="__main__":
     main_app()
