@@ -100,7 +100,7 @@ def main_app():
                 exp_number = str(index + 1)
             else:
                 exp_number = str(index+1)
-            file = pd.read_csv("data\experiment_{}.csv".format(exp_number))
+            file = pd.read_csv("data/experiment_{}.csv".format(exp_number))
             row = train_res[train_res['No'] == index+1]
                 
             #add experiment settings to features
