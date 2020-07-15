@@ -15,7 +15,7 @@ def main_app():
     all_files = []
     res_model = {}
 
-    st.sidebar.title("Miling Tool Wear Detection")
+    st.sidebar.title("CNC Mining Tool Wear Detection")
     option = st.sidebar.radio("Select", ["Introduction","EDA/Feature Engineering", "Model", "Results"])
 
     if option == "Introduction":

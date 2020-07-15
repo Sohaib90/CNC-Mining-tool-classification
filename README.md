@@ -1,2 +1,2 @@
 # CNC-Mining-tool-classification
-CNC mIning tool classification using streamlit
+CNC mining tool classification using streamlit
