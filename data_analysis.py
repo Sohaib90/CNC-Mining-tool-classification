@@ -241,7 +241,7 @@ def main_app():
         model = b[drop_model]
 
         # Accuracy and Confusion Matrix
-        st.markdown("#### Accuracy is : {}%".format(round(100*accuracy_score(data[3], model.predict(data[1])))))
+        st.markdown("#### Accuracy is : {}%".format(100*accuracy_score(data[3], model.predict(data[1]))))
         metrics = precision_recall_fscore_support(data[3], model.predict(data[1]))
         st.markdown("#### Precision of class 0 is : {} and class 1 is : {}".format(round(metrics[0][0]*100, 2), round(metrics[0][1]*100, 2)))
         st.markdown("#### Recall of class 0 is : {} and class 1 is : {}".format(round(metrics[1][0]*100, 2), round(metrics[1][1]*100, 2)))
