@@ -17,11 +17,12 @@ CNC mining tool classification using streamlit
 - [x] Results (line 227) has all the model results and insights which also uses functions from the utils.py file. 
 
 #### If you want to run on local machine 
-1. install streamlit
-2. git clone repository
-3. change directory to the repository
-4. execute command: streamlit run data_analysis.py
+1. install streamlit (pip install streamlit)
+2. install seaborn (pip install seaborn)
+3. git clone repository
+4. change directory to the repository (cd CNC-Mining-tool-classification)
+5. execute command: streamlit run data_analysis.py 
 
 #### To run on web
-go to **cnctool.herokuapp.com**
-THE GUI TAKES TIME TO PROCESS IN THE MODEL AND THE RESULTS SECTION BECAUSE EVERYTHING RUNS IN REAL TIME, and nothing is pre-loaded
+1. go to **cnctool.herokuapp.com**
+2. THE GUI TAKES TIME TO PROCESS IN THE MODEL AND THE RESULTS SECTION BECAUSE EVERYTHING RUNS IN REAL TIME, and nothing is pre-loaded
