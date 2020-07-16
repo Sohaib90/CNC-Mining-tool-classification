@@ -24,3 +24,4 @@ CNC mining tool classification using streamlit
 
 #### To run on web
 go to **cnctool.herokuapp.com**
+THE GUI TAKES TIME TO PROCESS IN THE MODEL AND THE RESULTS SECTION BECAUSE EVERYTHING RUNS IN REAL TIME, and nothing is pre-loaded
