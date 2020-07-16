@@ -9,7 +9,8 @@ CNC mining tool classification using streamlit
 5. **data_analysis.py** file has the main code for the application. 
 
 ###### data_analysis.py 
-    [x] main_app() is the main function of the application, where we have four sections described by `st.sidebar.radio`
+    - [x] main_app() is the main function of the application, where we have four sections described by st.sidebar.radio
+    - [x]
 
 #### If you want to run on local machine 
 1. install streamlit
